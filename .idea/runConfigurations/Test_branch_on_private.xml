@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test branch on private" type="js.build_tools.grunt">
+    <node-interpreter value="project" />
+    <gruntfile value="$PROJECT_DIR$/Gruntfile.js" />
+    <tasks>
+      <task value="private" />
+    </tasks>
+    <arguments value="--branch=test" />
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,11 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Deploy training" type="js.build_tools.grunt">
+  <configuration default="false" name="Default branch on public" type="js.build_tools.grunt">
     <node-interpreter value="project" />
     <gruntfile value="$PROJECT_DIR$/Gruntfile.js" />
     <tasks>
-      <task value="screeps" />
+      <task value="default" />
     </tasks>
-    <arguments value="--branch=tutorial-1" />
     <envs />
     <method v="2" />
   </configuration>
