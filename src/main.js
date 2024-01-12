@@ -1,23 +1,33 @@
-const roleHarvester = require('src/role/harvester');
-const roleUpgrader = require('src/role/upgrader');
-const roleBuilder = require('src/role/builder');
-
-const defaultBody = [WORK, CARRY, MOVE];
-const roles = ["harvester", "harvester", "builder", "upgrader"];
-let currentRoleIndex = 0;
+var roleHarvester = require('role.harvester');
+var roleUpgrader = require('role.upgrader');
+var roleBuilder = require('role.builder');
 
 module.exports.loop = function () {
 
-    // Role attribution
-    for(const name in Game.creeps) {
-        const creep = Game.creeps[name];
-        if(creep.memory.role === 'harvester') {
+    var tower = Game.getObjectById('030da32850fef02fae7382cf');
+    if(tower) {
+        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: (structure) => structure.hits < structure.hitsMax
+        });
+        if(closestDamagedStructure) {
+            tower.repair(closestDamagedStructure);
+        }
+
+        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if(closestHostile) {
+            tower.attack(closestHostile);
+        }
+    }
+
+    for(var name in Game.creeps) {
+        var creep = Game.creeps[name];
+        if(creep.memory.role == 'harvester') {
             roleHarvester.run(creep);
         }
-        if(creep.memory.role === 'upgrader') {
+        if(creep.memory.role == 'upgrader') {
             roleUpgrader.run(creep);
         }
-        if(creep.memory.role === 'builder') {
+        if(creep.memory.role == 'builder') {
             roleBuilder.run(creep);
         }
     }

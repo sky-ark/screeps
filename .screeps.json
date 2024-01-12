@@ -1,7 +1,7 @@
 {
-  "token": "add136a3-9f30-4be6-8279-2638b2b18fa0",
-  "email": "bast.frederic@gmail.com",
-  "ip": "10.1.0.106",
+  "token": "MY_TOKEN",
+  "email": "MY_EMAIL",
+  "ip": "PRIVATE_SERVER_IP",
   "port": "21025",
   "branch": "default",
   "ptr": false
