@@ -1,7 +1,7 @@
 {
-  "token": "MY_TOKEN",
+  "token": "e3a960ad-f1e2-443c-8ed3-b5411668048f",
   "email": "MY_EMAIL",
-  "ip": "PRIVATE_SERVER_IP",
+  "ip": "37.187.89.206",
   "port": "21025",
   "branch": "default",
   "ptr": false
