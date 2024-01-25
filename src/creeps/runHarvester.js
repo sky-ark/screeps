@@ -1,13 +1,14 @@
-Creep.prototype.runHarvester = function() {
-    switch(this.memory.state) {
+
+Creep.prototype.runHarvester = function () {
+    switch (this.memory.state) {
         case global.STATE_HARVESTING_ENERGY:
             this.stateHarvestEnergy();
             break;
-        case global.STATE_LOOTING_ENERGY:
-            this.stateLootEnergy();
-            break;
+        // case global.STATE_LOOTING_ENERGY:
+        //     this.stateLootEnergy();
+        //     break;
         case global.STATE_SEARCHING_ENERGY:
-            this.stateSearchEnergy();
+            this.stateSearchingEnergy();
             break;
         case global.STATE_DEPOSITING_ENERGY:
             this.stateDepositEnergy();
@@ -18,42 +19,55 @@ Creep.prototype.runHarvester = function() {
     }
 };
 
-Creep.prototype.stateHarvestEnergy = function() {
+Creep.prototype.stateHarvestEnergy = function () {
     const source = Game.getObjectById(this.memory.targetSourceId);
     if (source) {
         this.harvestOrMove(source);
 
         // Check if storage is full to transition to depositing
-        if (this.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
+        if ( this.store.getFreeCapacity(RESOURCE_ENERGY) === 0 ) {
+            delete this.memory.targetSourceId;
             this.memory.state = global.STATE_DEPOSITING_ENERGY;
             this.say('📥');
         }
     } else {
         // If the source is not found or invalid, switch back to finding energy
-        this.memory.targetSourceId = null;
+        delete this.memory.targetSourceId;
         this.memory.state = global.STATE_SEARCHING_ENERGY;
         this.say('🔍');
     }
 };
 
 /**
- * Harvest resources from a target and move towards it if necessary.
- * @param {Source} source - The energy source to harvest from.
- * @returns {number} The result code of the harvestOrMove action.
+ * This state allow the creep to search a good energy source to harvest or withdraw in the next state
  */
-Creep.prototype.harvestOrMove = function(source) {
-    const harvestResult = this.harvest(source);
-
-    if (harvestResult === ERR_NOT_IN_RANGE) {
-        return this.moveTo(source, { visualizePathStyle: { stroke: '#00ffff' } });
+Creep.prototype.stateSearchingEnergy = function () {
+    const sources = this.room.find(FIND_SOURCES); // Search for the sources in the room
+    if (sources.length > 0) {
+        const rndIndex = Math.floor(Math.random() * sources.length);
+        this.memory.targetSourceId = sources[rndIndex].id; // Create a target choosing randomly from the sources list
+        this.memory.state = global.STATE_HARVESTING_ENERGY;
+        this.say('⛏️');
     }
+}
 
-    return harvestResult;
-};
+Creep.prototype.stateDepositEnergy = function () {
+    const targets = this.room.find(FIND_STRUCTURES,
+        {filter: (structure) => {
+            return (structure.structureType === STRUCTURE_EXTENSION ||
+                    structure.structureType === STRUCTURE_SPAWN ||
+                    structure.structureType === STRUCTURE_TOWER) &&
+                structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+            }
+        });
 
-global.STATE_HARVESTING_ENERGY = 'harvesting_energy';
-global.STATE_DEPOSITING_ENERGY = 'depositing_energy';
-global.STATE_SEARCHING_ENERGY = 'searching_energy';
-global.STATE_LOOTING_ENERGY = 'looting_energy';
-global.STATE_UPGRADING_CONTROLLER = 'upgrading_controller';
-global.STATE_WITHDRAWING_ENERGY = 'withdrawing_energy';
+    if (targets.length > 0 && this.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+        if(this.transfer(targets[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+            this.moveTo(targets[0], {visualizePathStyle:{stroke:'#ffffff'}})
+        }
+    }
+    else {
+        this.memory.state = global.STATE_HARVESTING_ENERGY;
+        this.say('⛏️');
+    }
+}
