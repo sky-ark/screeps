@@ -2,6 +2,7 @@ require('creeps.runHarvester');
 require('creeps.runUpgrader');
 require('extensions.creepExtensions');
 require('states.constants');
+require('structures.Defend');
 //var roleHarvester = require ('role.harvester');
 
 var roleUpgrader = require ('role.upgrader');
@@ -41,7 +42,7 @@ module.exports.loop = function () {
                 console.log ('Spawning new harvester: ' + newName);
             }
         }
-        else if ( builders.length < 6 ) {
+        else if ( builders.length < 3 ) {
             newName = 'Builder' + Game.time;
             const spawnResult = spawn.spawnCreep ([WORK, CARRY, MOVE], newName, {
                 memory: {
@@ -54,7 +55,7 @@ module.exports.loop = function () {
         }
         else if ( upgraders.length < 6 ) {
             newName = 'Upgrader' + Game.time;
-            const spawnResult = spawn.spawnCreep ([WORK, CARRY, MOVE], newName, {
+            const spawnResult = spawn.spawnCreep ([WORK, WORK, CARRY, MOVE], newName, {
                 memory: {
                     role: 'upgrader'
                 }
@@ -78,4 +79,7 @@ module.exports.loop = function () {
             roleBuilder.run (creep);
         }
     }
+
+
+
 }
