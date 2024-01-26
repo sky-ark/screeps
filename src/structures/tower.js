@@ -22,10 +22,12 @@ StructureTower.prototype.runTower = function () {
 
 StructureTower.prototype.stateDefending = function () {
     var hostiles = this.room.find (FIND_HOSTILE_CREEPS);
-    if ( hostiles.length > 0 ) {
+    if ( hostiles.length > 0) {
         for (var i = 0; i < hostiles.length; i++) {
             var hostile = hostiles[i];
-            this.attack (hostiles[0]);
+            if (hostile.owner.username !== 'Elk') { // delete this
+                this.attack (hostiles[0]);
+            }
         }
     } else {
         Memory[this.id].state = global.STATE_REPAIRING;
@@ -33,13 +35,14 @@ StructureTower.prototype.stateDefending = function () {
 };
 
 StructureTower.prototype.stateRepairing = function () {
-    const structures = this.room.find (FIND_STRUCTURES, {
+    const structures = this.room.find (FIND_MY_STRUCTURES, {
         filter: (structure) => {
-            return structure.hits !== structure.hitsMax;
+            return (structure.hits !== structure.hitsMax && structure.structureType !== STRUCTURE_CONTROLLER);
         }
     });
-    this.repair (structures[0]);
+    this.repair(structures[0]);
 
+    if (structures.length === 0) { Memory[this.id].state = global.STATE_DEFENDING;}
 }
 
 StructureTower.prototype.stateHealing = function () {

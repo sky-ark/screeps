@@ -22,7 +22,13 @@ module.exports.loop = function () {
     const builders = _.filter (Game.creeps, (creep) => creep.memory.role === 'builder');
     const upgraders = _.filter (Game.creeps, (creep) => creep.memory.role === 'upgrader');
     const spawn = Game.spawns['Spawn1'];
-    const towers = spawn.room.find (FIND_MY_STRUCTURES, {filter: {structureTYPE: STRUCTURE_TOWER}});
+    const towers = spawn.room.find(FIND_MY_STRUCTURES, {
+        filter: (structure) => {
+            return (structure.structureType === STRUCTURE_TOWER) ;
+        }
+    });
+
+
 
     if ( spawn.spawning ) {
         var spawningCreep = Game.creeps[spawn.spawning.name];
@@ -43,7 +49,7 @@ module.exports.loop = function () {
             if ( spawnResult === OK ) {
                 console.log ('Spawning new harvester: ' + newName);
             }
-        } else if ( builders.length < 5 ) {
+        } else if ( builders.length < 8 ) {
             newName = 'Builder' + Game.time;
             const spawnResult = spawn.spawnCreep ([WORK, WORK, CARRY, MOVE], newName, {
                 memory: {
@@ -80,7 +86,7 @@ module.exports.loop = function () {
         }
     }
 
-    towers.forEach (tower => tower.runTower ());
+    towers.forEach (tower => tower.runTower());
 
 
 }
