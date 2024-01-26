@@ -20,6 +20,7 @@ Creep.prototype.runUpgrader = function () {
     }
 };
 
+
 Creep.prototype.stateAttackEnergy = function () {
     var hostiles = Game.room.find(FIND_HOSTILE_CREEPS);
     if (hostiles.length > 0) {
