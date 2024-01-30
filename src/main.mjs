@@ -1,16 +1,12 @@
-require ('creeps.runHarvester');
-require ('creeps.runUpgrader');
-require ('extensions.creepExtensions');
-require ('states.constants');
-require ('structures.Defend');
-require ('structures.tower');
-//var roleHarvester = require ('role.harvester');
-
-var roleUpgrader = require ('role.upgrader');
-var roleBuilder = require ('role.builder');
+import "./creeps/runHarvester.mjs";
+import "./extensions/creepExtensions.mjs";
+import {roleUpgrader} from "./role/upgrader.mjs";
+import {roleBuilder} from "./role/builder.mjs";
+import {runHarvester} from "./creeps/runHarvester.mjs";
+import {runTower} from "./structures/tower.mjs";
 
 module.exports.loop = function () {
-    for (var name in Memory.creeps) {
+    for (const name in Memory.creeps) {
         if ( !Game.creeps[name] ) {
             delete Memory.creeps[name];
             console.log ('Clearing non-existing creep memory:', name);
@@ -39,7 +35,7 @@ module.exports.loop = function () {
             {align: 'left', opacity: 0.8});
     } else {
         let newName;
-        if ( harvesters.length < 6 ) {
+        if ( harvesters.length < 8 ) {
             newName = 'Harvester' + Game.time;
             const spawnResult = spawn.spawnCreep ([WORK, CARRY, CARRY, MOVE, MOVE], newName, {
                 memory: {
@@ -49,7 +45,7 @@ module.exports.loop = function () {
             if ( spawnResult === OK ) {
                 console.log ('Spawning new harvester: ' + newName);
             }
-        } else if ( builders.length < 8 ) {
+        } else if ( builders.length < 6 ) {
             newName = 'Builder' + Game.time;
             const spawnResult = spawn.spawnCreep ([WORK, WORK, CARRY, MOVE], newName, {
                 memory: {
@@ -72,10 +68,10 @@ module.exports.loop = function () {
         }
     }
 
-    for (var name in Game.creeps) {
-        var creep = Game.creeps[name];
+    for (const name in Game.creeps) {
+        const creep = Game.creeps[name];
         if ( creep.memory.role === 'harvester' ) {
-            creep.runHarvester (creep);
+            runHarvester (creep);
             //roleHarvester.run (creep);
         }
         if ( creep.memory.role === 'upgrader' ) {
@@ -86,7 +82,7 @@ module.exports.loop = function () {
         }
     }
 
-    towers.forEach (tower => tower.runTower());
+    towers.forEach (tower => runTower(tower));
 
 
 }

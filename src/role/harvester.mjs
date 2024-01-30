@@ -1,4 +1,4 @@
-const roleHarvester = {
+export const roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function (creep) {

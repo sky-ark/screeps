@@ -1,4 +1,4 @@
-var roleUpgrader = {
+export const roleUpgrader = {
 
     /** @param {Creep} creep **/
     run: function(creep) {

@@ -1,4 +1,4 @@
-const roleBuilder = {
+export const roleBuilder = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -42,5 +42,3 @@ const roleBuilder = {
         }
 
 };
-
-module.exports = roleBuilder;
