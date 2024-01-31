@@ -7,10 +7,17 @@ export const runTower = function (tower) {
         case STATES.DEFENDING:
 
             stateDefending(tower);
+            if (Memory[tower.id].hostiles === 0)  {
+            Memory[tower.id].state = STATES.REPAIRING;
+        }
             break;
         case STATES.REPAIRING:
 
             stateRepairingT(tower);
+            if (Memory[tower.id].structures.length === 0) {
+                Memory[tower.id].state = STATES.DEFENDING;
+            }
+
             break;
         case STATES.HEALING:
 

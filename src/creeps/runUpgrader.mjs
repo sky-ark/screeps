@@ -4,7 +4,7 @@ import {
     stateDepositEnergy,
     stateHarvestEnergy,
     stateLootEnergy,
-    stateSearchingEnergy
+    stateSearchingEnergy, stateUpgradingController
 } from "../states/workingStates.mjs";
 
 export const runUpgrader = function (creep) {
@@ -13,7 +13,7 @@ export const runUpgrader = function (creep) {
             stateHarvestEnergy(creep);
             if (creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
                 delete creep.memory.targetSourceId;
-                creep.memory.state = STATES.DEPOSITING_ENERGY;
+                creep.memory.state = STATES.UPGRADING_CONTROLLER;
                 creep.say('📥');
             }
             break;
@@ -23,8 +23,11 @@ export const runUpgrader = function (creep) {
         case STATES.SEARCHING_ENERGY:
             stateSearchingEnergy(creep);
             break;
-        case STATES.DEPOSITING_ENERGY:
-            stateDepositEnergy(creep);
+        case STATES.UPGRADING_CONTROLLER:
+            stateUpgradingController(creep);
+            if(creep.store[RESOURCE_ENERGY] === 0) {
+                creep.memory.state = STATES.SEARCHING_ENERGY;
+            }
             break;
         case STATES.ATTACKING_ENERGY:
             stateAttackEnergy(creep);

@@ -105,40 +105,43 @@ export const stateBuilding = function (creep) {
     }
 }
 
+export const stateUpgradingController = function (creep) {
+   if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) {
+       creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
+   }
+}
+
 //Tower
 export const stateDefending = function (tower) {
-    var hostiles = tower.room.find (FIND_HOSTILE_CREEPS);
-    if ( hostiles.length > 0) {
-        for (var i = 0; i < hostiles.length; i++) {
-            var hostile = hostiles[i];
+    Memory[tower.id].hostiles = tower.room.find (FIND_HOSTILE_CREEPS);
+    if ( Memory[tower.id].hostiles.length > 0) {
+        for (var i = 0; i < Memory[tower.id].hostiles.length; i++) {
+            Memory[tower.id].hostile = Memory[tower.id].hostiles[i];
            // if (hostile.owner.username !== 'Elk') { // delete tower
-                tower.attack (hostiles[0]);
+                tower.attack (Memory[tower.id].hostiles[0]);
             }
         }
-    else {
-        Memory[tower.id].state = STATES.REPAIRING;
-    }
+
 };
 
 
 //stateRepairing for towers
 export const stateRepairingT = function (tower) {
-    const structures = tower.room.find (FIND_MY_STRUCTURES, {
+    Memory[tower.id].structures = tower.room.find (FIND_MY_STRUCTURES, {
         filter: (structure) => {
             return (structure.hits !== structure.hitsMax && structure.structureType !== STRUCTURE_CONTROLLER);
         }
     });
-    tower.repair(structures[0]);
+    tower.repair(Memory[tower.id].structures[0]);
 
-    if (structures.length === 0) { Memory[tower.id].state = STATES.DEFENDING;}
 }
 
 
 
 
 export const stateHealing = function (tower) {
-    for (var name in Game.creeps) {
-        var creep = Game.creeps[name];
+    for (const name in Game.creeps) {
+        const creep = Game.creeps[name];
         if ( creep.hits !== creep.hitsMax ) {
             tower.heal (creep);
         } else {

@@ -5,6 +5,19 @@ import {roleBuilder} from "./role/builder.mjs";
 import {runHarvester} from "./creeps/runHarvester.mjs";
 import {runTower} from "./structures/tower.mjs";
 import {runBuilder} from "./creeps/runBuilder.js";
+import {runUpgrader} from "./creeps/runUpgrader.mjs";
+//import {data} from "../GUI/GUI_display.mjs";
+//var Display = require('../GUI/GUI_display.mjs');
+
+// export const harvesters = _.filter (Game.creeps, (creep) => creep.memory.role === 'harvester');
+// export const builders = _.filter (Game.creeps, (creep) => creep.memory.role === 'builder');
+// export const upgraders = _.filter (Game.creeps, (creep) => creep.memory.role === 'upgrader');
+// export const spawn = Game.spawns['Spawn1'];
+// export const towers = spawn.room.find(FIND_MY_STRUCTURES, {
+//     filter: (structure) => {
+//         return (structure.structureType === STRUCTURE_TOWER) ;
+//     }
+// });
 
 module.exports.loop = function () {
     for (const name in Memory.creeps) {
@@ -14,6 +27,7 @@ module.exports.loop = function () {
         }
     }
 
+    // data.toto = "CA MARCHE";
 
     const harvesters = _.filter (Game.creeps, (creep) => creep.memory.role === 'harvester');
     const builders = _.filter (Game.creeps, (creep) => creep.memory.role === 'builder');
@@ -58,7 +72,7 @@ module.exports.loop = function () {
             }
         } else if ( upgraders.length < 12 ) {
             newName = 'Upgrader' + Game.time;
-            const spawnResult = spawn.spawnCreep ([WORK, WORK, CARRY, MOVE], newName, {
+            const spawnResult = spawn.spawnCreep ([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName, {
                 memory: {
                     role: 'upgrader'
                 }
@@ -76,7 +90,7 @@ module.exports.loop = function () {
             //roleHarvester.run (creep);
         }
         if ( creep.memory.role === 'upgrader' ) {
-            roleUpgrader.run (creep);
+            runUpgrader(creep);
         }
         if ( creep.memory.role === 'builder' ) {
             runBuilder(creep);
@@ -85,6 +99,18 @@ module.exports.loop = function () {
     }
 
     towers.forEach (tower => runTower(tower));
+
+
+    // document.title = "Screeps Manager";
+    // function display(){
+    //     const creepsListContainer = document.getElementById('creepsList');
+    //     creepsListContainer.innerHTML = "";
+    //     towers.forEach(creep => {
+    //     const creepElement = document.createElement('div');
+    //     creepElement.innerHTML = ` memory <strong>{JSON.stringify(creep.memory)}</strong> - Type `;
+    //     creepsListContainer.appendChild(creepElement);
+    //     })
+    // }
 
 
 }
