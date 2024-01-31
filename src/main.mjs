@@ -4,6 +4,7 @@ import {roleUpgrader} from "./role/upgrader.mjs";
 import {roleBuilder} from "./role/builder.mjs";
 import {runHarvester} from "./creeps/runHarvester.mjs";
 import {runTower} from "./structures/tower.mjs";
+import {runBuilder} from "./creeps/runBuilder.js";
 
 module.exports.loop = function () {
     for (const name in Memory.creeps) {
@@ -35,7 +36,7 @@ module.exports.loop = function () {
             {align: 'left', opacity: 0.8});
     } else {
         let newName;
-        if ( harvesters.length < 8 ) {
+        if ( harvesters.length < 10 ) {
             newName = 'Harvester' + Game.time;
             const spawnResult = spawn.spawnCreep ([WORK, CARRY, CARRY, MOVE, MOVE], newName, {
                 memory: {
@@ -55,7 +56,7 @@ module.exports.loop = function () {
             if ( spawnResult === OK ) {
                 console.log ('Spawning new builder: ' + newName);
             }
-        } else if ( upgraders.length < 8 ) {
+        } else if ( upgraders.length < 12 ) {
             newName = 'Upgrader' + Game.time;
             const spawnResult = spawn.spawnCreep ([WORK, WORK, CARRY, MOVE], newName, {
                 memory: {
@@ -78,7 +79,8 @@ module.exports.loop = function () {
             roleUpgrader.run (creep);
         }
         if ( creep.memory.role === 'builder' ) {
-            roleBuilder.run (creep);
+            runBuilder(creep);
+            //roleBuilder.run (creep);
         }
     }
 

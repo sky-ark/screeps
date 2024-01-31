@@ -1,5 +1,5 @@
 import {STATES} from "../states/constants.mjs";
-import {stateDefending, stateHealing, stateRepairing} from "../states/workingStates.mjs";
+import {stateDefending, stateHealing, stateRepairing, stateRepairingT} from "../states/workingStates.mjs";
 
 export const runTower = function (tower) {
     if ( Memory[tower.id] === undefined ) Memory[tower.id] = {};
@@ -10,7 +10,7 @@ export const runTower = function (tower) {
             break;
         case STATES.REPAIRING:
 
-            stateRepairing(tower);
+            stateRepairingT(tower);
             break;
         case STATES.HEALING:
 

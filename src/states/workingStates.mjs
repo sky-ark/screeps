@@ -61,7 +61,8 @@ export const stateDepositEnergy = function (creep) {
             filter: (structure) => {
                 return (structure.structureType === STRUCTURE_TOWER ||
                         structure.structureType === STRUCTURE_SPAWN ||
-                        structure.structureType === STRUCTURE_EXTENSION) &&
+                        structure.structureType === STRUCTURE_EXTENSION ||
+                        structure.structureType === STRUCTURE_STORAGE) &&
                     structure.store.getFreeCapacity (RESOURCE_ENERGY) > 0;
             }
         });
@@ -87,6 +88,23 @@ export const stateAttackEnergy = function (creep) {
 
     }
 }
+
+export const stateRepairing = function (creep) {
+    creep.memory.structures = creep.room.find (FIND_MY_STRUCTURES, {
+        filter: (structure) => {
+            return (structure.hits !== structure.hitsMax && structure.structureType !== STRUCTURE_CONTROLLER);
+        }
+    });
+    creep.repair(creep.memory.structures[0]); }
+export const stateBuilding = function (creep) {
+    creep.memory.constSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
+    if(creep.memory.constSites.length) {
+        if(creep.build(creep.memory.constSites[0]) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(creep.memory.constSites[0], {visualizePathStyle: {stroke: '#ff12ff'}});
+        }
+    }
+}
+
 //Tower
 export const stateDefending = function (tower) {
     var hostiles = tower.room.find (FIND_HOSTILE_CREEPS);
@@ -102,7 +120,9 @@ export const stateDefending = function (tower) {
     }
 };
 
-export const stateRepairing = function (tower) {
+
+//stateRepairing for towers
+export const stateRepairingT = function (tower) {
     const structures = tower.room.find (FIND_MY_STRUCTURES, {
         filter: (structure) => {
             return (structure.hits !== structure.hitsMax && structure.structureType !== STRUCTURE_CONTROLLER);
@@ -112,6 +132,9 @@ export const stateRepairing = function (tower) {
 
     if (structures.length === 0) { Memory[tower.id].state = STATES.DEFENDING;}
 }
+
+
+
 
 export const stateHealing = function (tower) {
     for (var name in Game.creeps) {

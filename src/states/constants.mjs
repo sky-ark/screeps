@@ -9,5 +9,6 @@ export const STATES = {
     REPAIRING: 'repairing',
     DEFENDING: 'defending',
     HEALING: 'healing',
+    BUILDING: 'Building'
 }
 
