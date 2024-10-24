@@ -1,5 +1,24 @@
 import {STATES} from "./constants.mjs";
+import { calculateAvailableSpots } from "../utils/sourceUtils.mjs";
 
+
+export const stateWithdrawEnergy = function (creep) {
+    const containers = creep.room.find(FIND_STRUCTURES, {
+        filter: (structure) => structure.structureType === STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 0
+    });
+
+    if (containers.length > 0) {
+        const target = creep.pos.findClosestByPath(containers);
+        if (creep.withdraw(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(target, { visualizePathStyle: { stroke: '#ffaa00' } });
+        }
+    } else {
+        // Wait for harvesters to refill resources
+        creep.memory.state = STATES.HARVESTING_ENERGY;
+        creep.say('⛏️');
+        creep.say('⏳ waiting');
+    }
+};
 export const stateHarvestEnergy = function (creep) {
     const source = Game.getObjectById(creep.memory.targetSourceId);
     if (source) {
@@ -44,39 +63,81 @@ export const stateLootEnergy = function (creep) {
 /**
  * creep state allow the creep to search a good energy source to harvest or withdraw in the next state
  */
+
+
+
 export const stateSearchingEnergy = function (creep) {
-    const sources = creep.room.find (FIND_SOURCES); // Search for the sources in the room
-    if ( sources.length > 0 ) {
-        const rndIndex = Math.floor (Math.random () * sources.length);
-        creep.memory.targetSourceId = sources[rndIndex].id; // Create a target choosing randomly from the sources list
+    const sources = creep.room.find(FIND_SOURCES);
+
+    for (const source of sources) {
+        const availableSpots = calculateAvailableSpots(source);
+
+        if (availableSpots > 0) {
+            if (creep.memory.role === 'harvester') {
+                // Harvesters always go to the first available source
+                creep.memory.targetSourceId = source.id;
+                creep.memory.state = STATES.HARVESTING_ENERGY;
+                creep.say('⛏️');
+                return;
+            } else {
+                // Non-harvesters go to the second source if it exists
+                if (sources.length > 1 && availableSpots > 1) {
+                    creep.memory.targetSourceId = sources[1].id;
+                    creep.memory.state = STATES.HARVESTING_ENERGY;
+                    creep.say('⛏️');
+                    return;
+                } else {
+                    creep.memory.targetSourceId = source.id;
+                    creep.memory.state = STATES.HARVESTING_ENERGY;
+                    creep.say('⛏️');
+                    return;
+                }
+            }
+        }
+    }
+
+    // If no sources are available, fallback to the first source
+    if (sources.length > 0) {
+        creep.memory.targetSourceId = sources[0].id;
         creep.memory.state = STATES.HARVESTING_ENERGY;
-        creep.say ('⛏️');
+        creep.say('⛏️');
     }
 };
 
+
 export const stateDepositEnergy = function (creep) {
-  //  const targets = creep.room.find (FIND_STRUCTURES,
-    creep.memory.targets = creep.room.find (FIND_MY_STRUCTURES,
-        {
-            filter: (structure) => {
-                return (structure.structureType === STRUCTURE_TOWER ||
-                        structure.structureType === STRUCTURE_SPAWN ||
-                        structure.structureType === STRUCTURE_EXTENSION ||
-                        structure.structureType === STRUCTURE_STORAGE) &&
-                    structure.store.getFreeCapacity (RESOURCE_ENERGY) > 0;
-            }
-        });
+    // Check for adjacent upgraders or builders
+    const adjacentCreeps = creep.pos.findInRange(FIND_MY_CREEPS, 1, {
+        filter: (c) => c.memory.role === 'upgrader' || c.memory.role === 'builder'
+    });
 
-    // if ( targets.length > 0 && creep.store.getUsedCapacity (RESOURCE_ENERGY) > 0 ) {
-    //     if ( creep.transfer (targets[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE ) {
-    //         creep.moveTo (targets[0], {visualizePathStyle: {stroke: '#ffffff'}})
-    //     }
-    // } else {
-    //     creep.memory.state = STATES.HARVESTING_ENERGY;
-    //     creep.say ('⛏️');
-    // }
-}
+    if (adjacentCreeps.length > 0) {
+        const targetCreep = adjacentCreeps[0];
+        if (creep.transfer(targetCreep, RESOURCE_ENERGY) === OK) {
+            return;
+        }
+    }
 
+    // If no adjacent upgraders or builders, find the closest structure
+    const target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+        filter: (structure) => {
+            return (structure.structureType === STRUCTURE_TOWER ||
+                    structure.structureType === STRUCTURE_SPAWN ||
+                    structure.structureType === STRUCTURE_EXTENSION ||
+                    structure.structureType === STRUCTURE_STORAGE) &&
+                structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+        }
+    });
+
+    if (target && creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+        if (creep.transfer(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+        }
+    } else {
+        creep.memory.state = STATES.HARVESTING_ENERGY;
+        creep.say('⛏️');
+    }
+};
 export const stateAttackEnergy = function (creep) {
     const hostiles = Game.room.find(FIND_HOSTILE_CREEPS);
     if (hostiles.length > 0) {
@@ -150,3 +211,4 @@ export const stateHealing = function (tower) {
     }
 
 }
+

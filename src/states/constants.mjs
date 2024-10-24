@@ -4,7 +4,7 @@ export const STATES = {
     SEARCHING_ENERGY: 'searching_energy',
     LOOTING_ENERGY: 'looting_energy',
     UPGRADING_CONTROLLER: 'upgrading_controller',
-    WITHDRAWING_ENERGY: 'withdrawing_energy',
+    WITHDRAWING_ENERGY: 'withdrawEnergy',
     ATTACKING_ENERGY: 'attacking_energy',
     REPAIRING: 'repairing',
     DEFENDING: 'defending',

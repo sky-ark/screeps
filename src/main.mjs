@@ -4,8 +4,9 @@ import {roleUpgrader} from "./role/upgrader.mjs";
 import {roleBuilder} from "./role/builder.mjs";
 import {runHarvester} from "./creeps/runHarvester.mjs";
 import {runTower} from "./structures/tower.mjs";
-import {runBuilder} from "./creeps/runBuilder.js";
+import {runBuilder} from "./creeps/runBuilder.mjs";
 import {runUpgrader} from "./creeps/runUpgrader.mjs";
+import {resetCreepStates} from "./utils/sourceUtils.mjs";
 //import {data} from "../GUI/GUI_display.mjs";
 //var Display = require('../GUI/GUI_display.mjs');
 
@@ -18,6 +19,8 @@ import {runUpgrader} from "./creeps/runUpgrader.mjs";
 //         return (structure.structureType === STRUCTURE_TOWER) ;
 //     }
 // });
+
+global.resetCreepStates = resetCreepStates;
 
 module.exports.loop = function () {
     for (const name in Memory.creeps) {
@@ -50,7 +53,7 @@ module.exports.loop = function () {
             {align: 'left', opacity: 0.8});
     } else {
         let newName;
-        if ( harvesters.length < 10 ) {
+        if ( harvesters.length < 6 ) {
             newName = 'Harvester' + Game.time;
             const spawnResult = spawn.spawnCreep ([WORK, CARRY, CARRY, MOVE, MOVE], newName, {
                 memory: {
