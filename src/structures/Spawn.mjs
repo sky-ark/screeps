@@ -1,12 +1,11 @@
-var spawn = Game.spawns['Spawn1'];
-var canSpawnCreep = true;
+const spawn = Game.spawns['Spawn1'];
+let canSpawnCreep = true;
 
 if (spawn) {
-    var energyStored = spawn.store[RESOURCE_ENERGY];
+    const energyStored = spawn.store[RESOURCE_ENERGY];
 
     if (energyStored !== undefined) {
-        if (energyStored >= 300){canSpawnCreep = true;}
-        else {canSpawnCreep = false;}
+        canSpawnCreep = energyStored >= 300;
     }
     else {console.log("Can't find the Core");
     }

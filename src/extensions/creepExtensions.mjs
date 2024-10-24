@@ -12,3 +12,4 @@ Creep.prototype.harvestOrMove = function (source) {
 
     return harvestResult;
 };
+

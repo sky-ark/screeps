@@ -44,13 +44,16 @@ export const stateLootEnergy = function (creep) {
 /**
  * creep state allow the creep to search a good energy source to harvest or withdraw in the next state
  */
+// src/states/workingStates.mjs
+import { switchTargetSource } from '../utils.mjs';
+
 export const stateSearchingEnergy = function (creep) {
-    const sources = creep.room.find (FIND_SOURCES); // Search for the sources in the room
-    if ( sources.length > 0 ) {
-        const rndIndex = Math.floor (Math.random () * sources.length);
-        creep.memory.targetSourceId = sources[rndIndex].id; // Create a target choosing randomly from the sources list
-        creep.memory.state = STATES.HARVESTING_ENERGY;
-        creep.say ('⛏️');
+    const sources = creep.room.find(FIND_SOURCES);
+    if (sources.length > 0) {
+        switchTargetSource(creep);
+    } else {
+        creep.memory.state = STATES.SEARCHING_ENERGY;
+        creep.say('🔍');
     }
 };
 
@@ -78,10 +81,10 @@ export const stateDepositEnergy = function (creep) {
 }
 
 export const stateAttackEnergy = function (creep) {
-    const hostiles = Game.room.find(FIND_HOSTILE_CREEPS);
+    const hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
     if (hostiles.length > 0) {
-        for (var i = 0; i < hostiles.length; i++) {
-            var hostile = hostiles[i]
+        for (let i = 0; i < hostiles.length; i++) {
+            let hostile = hostiles[i]
             creep.moveTo(hostile);
             creep.attack(hostile);
         }
@@ -115,7 +118,7 @@ export const stateUpgradingController = function (creep) {
 export const stateDefending = function (tower) {
     Memory[tower.id].hostiles = tower.room.find (FIND_HOSTILE_CREEPS);
     if ( Memory[tower.id].hostiles.length > 0) {
-        for (var i = 0; i < Memory[tower.id].hostiles.length; i++) {
+        for (let i = 0; i < Memory[tower.id].hostiles.length; i++) {
             Memory[tower.id].hostile = Memory[tower.id].hostiles[i];
            // if (hostile.owner.username !== 'Elk') { // delete tower
                 tower.attack (Memory[tower.id].hostiles[0]);
