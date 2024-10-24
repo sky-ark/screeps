@@ -45,7 +45,7 @@ module.exports.loop = function () {
             {align: 'left', opacity: 0.8});
     } else {
         let newName;
-        if (harvesters.length < 6) {
+        if (harvesters.length < 3) {
             newName = 'Harvester' + Game.time;
             const spawnResult = spawn.spawnCreep([WORK, CARRY, CARRY, MOVE, MOVE], newName, {
                 memory: {
@@ -55,7 +55,7 @@ module.exports.loop = function () {
             if (spawnResult === OK) {
                 console.log('Spawning new harvester: ' + newName);
             }
-        } else if (builders.length < 6) {
+        } else if (builders.length < 3) {
             newName = 'Builder' + Game.time;
             const spawnResult = spawn.spawnCreep([WORK, WORK, CARRY, MOVE], newName, {
                 memory: {
@@ -65,7 +65,7 @@ module.exports.loop = function () {
             if (spawnResult === OK) {
                 console.log('Spawning new builder: ' + newName);
             }
-        } else if (upgraders.length < 6) {
+        } else if (upgraders.length < 3) {
             newName = 'Upgrader' + Game.time;
             const spawnResult = spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName, {
                 memory: {
@@ -89,7 +89,7 @@ module.exports.loop = function () {
                 }
             } else if (builders.length < 6) {
                 newName = 'SuperBuilder' + Game.time;
-                const spawnResult = spawn.spawnCreep([WORK, WORK, WORK, CARRY, MOVE], newName, {
+                const spawnResult = spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName, {
                     memory: {
                         role: 'builder'
                     }
@@ -97,7 +97,7 @@ module.exports.loop = function () {
                 if (spawnResult === OK) {
                     console.log('Spawning new super builder: ' + newName);
                 }
-            } else if (upgraders.length < 6) {
+            } else if (upgraders.length < 8) {
                 newName = 'SuperUpgrader' + Game.time;
                 const spawnResult = spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName, {
                     memory: {
